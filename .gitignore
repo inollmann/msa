@@ -1,2 +1,7 @@
 datasets/
 keypoints/
+tensorflow-model-maker/
+Dokumente/
+build/
+dist/
+venv/
