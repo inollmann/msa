@@ -5,3 +5,5 @@ Dokumente/
 build/
 dist/
 venv/
+mediapipe_test.ipynb
+codetest.py
