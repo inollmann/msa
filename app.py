@@ -43,13 +43,21 @@ def get_args():
 def main():
 
     use_3D = True
-    spelling_hand = 1   # 0: Left   1: Right
+
+    name_cam_window = 'Video'
+    name_guide_window = 'ASL Alphabet'
+    cv.namedWindow(name_cam_window)
+    cv.namedWindow(name_guide_window)
+
+    # Spelling settings
     spelling_cooldown = 1
+    trackbar_name = 'L <-> R'
+    cv.createTrackbar(trackbar_name, name_cam_window, 1, 1, skip)
 
     # Argument parsing #################################################################
     args = get_args()
 
-    guide = cv.imread('ASLalphabet.jpg', 0)
+    guide = cv.imread('ASLalphabet.jpg')
     cap_device = args.device
     # cap_device = "multiplehands.mp4"
     # cap_device = "hand.jpg"
@@ -114,6 +122,8 @@ def main():
     max_word_len = 22
 
     while True:
+        spelling_hand = cv.getTrackbarPos(trackbar_name, name_cam_window)
+
         fps = cvFpsCalc.get()
 
         # Process Key (ESC: end) #################################################
@@ -223,8 +233,8 @@ def main():
         debug_image = lf.draw_letters(debug_image, recorded_word)
 
         # Screen reflection #############################################################
-        cv.imshow('Hand Gesture Recognition', debug_image)
-        cv.imshow('ASL Alphabet', guide)
+        cv.imshow(name_cam_window, debug_image)
+        cv.imshow(name_guide_window, guide)
 
     cap.release()
     cv.destroyAllWindows()
@@ -241,6 +251,9 @@ def select_mode(key, mode):
     if key == 104:  # h
         mode = 2
     return number, mode
+
+def skip(x):
+    pass
 
 
 if __name__ == '__main__':
