@@ -9,6 +9,7 @@ from collections import deque
 
 import cv2 as cv
 import mediapipe as mp
+import tkinter as tk
 
 from model.keypoint_classifier.control_classifier import ControlClassifier
 from utils import CvFpsCalc
@@ -51,16 +52,22 @@ def main():
 
     # Spelling settings
     spelling_cooldown = 1
-    trackbar_name = 'L <-> R'
-    cv.createTrackbar(trackbar_name, name_cam_window, 1, 1, skip)
+    root = tk.Tk()
+    root.title("Spelling Hand")
+    spelling_label = tk.Label(root, text="Spelling Hand")
+    spelling_label.pack()
+    spelling_var = tk.IntVar(value=1)
+    spelling_rb_left = tk.Radiobutton(root, text="Left", variable=spelling_var, value=0)
+    spelling_rb_left.pack()
+    spelling_rb_right = tk.Radiobutton(root, text="Right", variable=spelling_var, value=1)
+    spelling_rb_right.pack()
+
 
     # Argument parsing #################################################################
     args = get_args()
 
     guide = cv.imread('ASLalphabet.jpg')
     cap_device = args.device
-    # cap_device = "multiplehands.mp4"
-    # cap_device = "hand.jpg"
     cap_width = args.width
     cap_height = args.height
 
@@ -122,7 +129,9 @@ def main():
     max_word_len = 22
 
     while True:
-        spelling_hand = cv.getTrackbarPos(trackbar_name, name_cam_window)
+
+        root.update()
+        spelling_hand = spelling_var.get()
 
         fps = cvFpsCalc.get()
 
@@ -236,6 +245,7 @@ def main():
         cv.imshow(name_cam_window, debug_image)
         cv.imshow(name_guide_window, guide)
 
+    root.destroy()
     cap.release()
     cv.destroyAllWindows()
 
@@ -252,7 +262,7 @@ def select_mode(key, mode):
         mode = 2
     return number, mode
 
-def skip(x):
+def skip():
     pass
 
 
