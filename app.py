@@ -6,10 +6,12 @@ import argparse
 import time
 from collections import Counter
 from collections import deque
+from PIL import Image, ImageTk
 
 import cv2 as cv
 import mediapipe as mp
 import tkinter as tk
+import numpy as np
 
 from model.keypoint_classifier.control_classifier import ControlClassifier
 from utils import CvFpsCalc
@@ -43,25 +45,42 @@ def get_args():
 
 def main():
 
-    use_3D = True
-
-    name_cam_window = 'Video'
-    name_guide_window = 'ASL Alphabet'
-    cv.namedWindow(name_cam_window)
-    cv.namedWindow(name_guide_window)
-
     # Spelling settings
     spelling_cooldown = 1
+
+    # Create GUI
     root = tk.Tk()
     root.title("Spelling Hand")
-    spelling_label = tk.Label(root, text="Spelling Hand")
-    spelling_label.pack()
-    spelling_var = tk.IntVar(value=1)
-    spelling_rb_left = tk.Radiobutton(root, text="Left", variable=spelling_var, value=0)
-    spelling_rb_left.pack()
-    spelling_rb_right = tk.Radiobutton(root, text="Right", variable=spelling_var, value=1)
-    spelling_rb_right.pack()
 
+    frame_shlr = tk.Frame(root)
+    frame_shlr.pack(side='top')
+
+    frame_imgs = tk.Frame(root)
+    frame_imgs.pack(side='top')
+
+    label_sh = tk.Label(frame_shlr, text="Spelling Hand")
+    label_sh.pack(side='top', pady=2)
+
+    frame_lr = tk.Frame(frame_shlr)
+    frame_lr.pack(side='top')
+
+    var_sh = tk.IntVar(value=1)
+    rbutton_left = tk.Radiobutton(frame_lr, text="Left", variable=var_sh, value=0)
+    rbutton_left.pack(side='left', padx=5, pady=1)
+    rbutton_right = tk.Radiobutton(frame_lr, text="Right", variable=var_sh, value=1)
+    rbutton_right.pack(side='left', padx=5, pady=1)
+
+    tk_guide = ImageTk.PhotoImage(Image.open("ASLalphabet.jpg"))
+    label_guide = tk.Label(frame_imgs, image=tk_guide)
+    label_guide.pack(side='left')
+
+    label_video = tk.Label(frame_imgs)
+    label_video.pack(side='right')
+
+    # name_cam_window = 'Video'
+    # name_guide_window = 'ASL Alphabet'
+    # cv.namedWindow(name_cam_window)
+    # cv.namedWindow(name_guide_window)
 
     # Argument parsing #################################################################
     args = get_args()
@@ -76,6 +95,7 @@ def main():
     min_tracking_confidence = args.min_tracking_confidence
 
     use_brect = True
+    use_3D = True
 
     # Camera preparation ###############################################################
     cap = cv.VideoCapture(cap_device)
@@ -130,8 +150,14 @@ def main():
 
     while True:
 
-        root.update()
-        spelling_hand = spelling_var.get()
+        try:
+            root.update()
+            if not root.winfo_exists():
+                break
+        except tk.TclError as e:
+            break
+
+        spelling_hand = var_sh.get()
 
         fps = cvFpsCalc.get()
 
@@ -242,10 +268,18 @@ def main():
         debug_image = lf.draw_letters(debug_image, recorded_word)
 
         # Screen reflection #############################################################
-        cv.imshow(name_cam_window, debug_image)
-        cv.imshow(name_guide_window, guide)
+        tk_video = cv.cvtColor(debug_image, cv.COLOR_BGR2RGB)
+        tk_video = ImageTk.PhotoImage(Image.fromarray(tk_video))
+        label_video.config(image=tk_video)
+        label_guide.config(image=tk_guide)
+        # cv.imshow(name_cam_window, debug_image)
+        # cv.imshow(name_guide_window, guide)
 
-    root.destroy()
+    try:
+        root.destroy()
+    except tk.TclError as e:
+        pass
+
     cap.release()
     cv.destroyAllWindows()
 
