@@ -225,7 +225,7 @@ def draw_point_history(image, point_history):
     return image
 
 
-def draw_info(image, fps, mode, number):
+def draw_info(image, fps):
     x = 10
     y = 470
     cv.putText(image, "FPS: " + str(fps), (x, y), cv.FONT_HERSHEY_SIMPLEX,

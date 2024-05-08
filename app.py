@@ -11,7 +11,6 @@ from PIL import Image, ImageTk
 import cv2 as cv
 import mediapipe as mp
 import tkinter as tk
-import numpy as np
 
 from model.keypoint_classifier.control_classifier import ControlClassifier
 from utils import CvFpsCalc
@@ -50,7 +49,6 @@ def main():
     # Spelling settings
     spelling_cooldown = 1
     global recorded_word
-    # recorded_word = ""
 
     # Create GUI
     root = tk.Tk()
@@ -84,11 +82,6 @@ def main():
     rbutton_left.pack(side='left', padx=5, pady=1)
     rbutton_right = tk.Radiobutton(frame_lr, text="Right", variable=var_sh, value=1)
     rbutton_right.pack(side='left', padx=5, pady=1)
-
-    # name_cam_window = 'Video'
-    # name_guide_window = 'ASL Alphabet'
-    # cv.namedWindow(name_cam_window)
-    # cv.namedWindow(name_guide_window)
 
     # Argument parsing #################################################################
     args = get_args()
@@ -150,7 +143,7 @@ def main():
     finger_gesture_history = deque(maxlen=history_length)
 
     #  ########################################################################
-    mode = 0
+    # mode = 0
     record_letter = False
     last_activation_time = 0
     max_word_len = 22
@@ -174,7 +167,7 @@ def main():
             break
         if key == 8:    # Del
             recorded_word = ""
-        number, mode = select_mode(key, mode)
+        # number, mode = select_mode(key, mode)
 
         # Camera capture #####################################################
         ret, image = cap.read()
@@ -245,16 +238,16 @@ def main():
                 #     point_history.append([0, 0])
 
                 # Finger gesture classification
-                finger_gesture_id = 0
-                point_history_len = len(pre_processed_point_history_list)
+                # finger_gesture_id = 0
+                # point_history_len = len(pre_processed_point_history_list)
                 # if point_history_len == (history_length * 2):
                 #     finger_gesture_id = point_history_classifier(
                 #         pre_processed_point_history_list)
 
                 # Calculates the gesture IDs in the latest detection
-                finger_gesture_history.append(finger_gesture_id)
-                most_common_fg_id = Counter(
-                    finger_gesture_history).most_common()
+                # finger_gesture_history.append(finger_gesture_id)
+                # most_common_fg_id = Counter(
+                #     finger_gesture_history).most_common()
 
                 # Drawing part
                 landmarks_2D = lf.conv_to_2D(landmark_list)
@@ -271,7 +264,7 @@ def main():
             point_history.append([0, 0])
 
         debug_image = lf.draw_point_history(debug_image, point_history)
-        debug_image = lf.draw_info(debug_image, fps, mode, number)
+        debug_image = lf.draw_info(debug_image, fps)
         debug_image = lf.draw_letters(debug_image, recorded_word)
 
         # Screen reflection #############################################################
@@ -279,8 +272,6 @@ def main():
         tk_video = ImageTk.PhotoImage(Image.fromarray(tk_video))
         label_video.config(image=tk_video)
         label_guide.config(image=tk_guide)
-        # cv.imshow(name_cam_window, debug_image)
-        # cv.imshow(name_guide_window, guide)
 
     try:
         root.destroy()
@@ -294,23 +285,6 @@ def main():
 def reset_word():
     global recorded_word
     recorded_word = ""
-
-
-def select_mode(key, mode):
-    number = -1
-    if 48 <= key <= 57:  # 0 ~ 9
-        number = key - 48
-    if key == 110:  # n
-        mode = 0
-    if key == 107:  # k
-        mode = 1
-    if key == 104:  # h
-        mode = 2
-    return number, mode
-
-
-def skip():
-    pass
 
 
 if __name__ == '__main__':
