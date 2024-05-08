@@ -20,6 +20,8 @@ from model import HandSignClassifier
 
 import landmark_functions as lf
 
+recorded_word = ""
+
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -47,16 +49,29 @@ def main():
 
     # Spelling settings
     spelling_cooldown = 1
+    global recorded_word
+    # recorded_word = ""
 
     # Create GUI
     root = tk.Tk()
-    root.title("Spelling Hand")
-
-    frame_shlr = tk.Frame(root)
-    frame_shlr.pack(side='top')
+    root.title("ASL Writer")
 
     frame_imgs = tk.Frame(root)
     frame_imgs.pack(side='top')
+
+    tk_guide = ImageTk.PhotoImage(Image.open("ASLalphabet.jpg"))
+    label_guide = tk.Label(frame_imgs, image=tk_guide)
+    label_guide.pack(side='left')
+
+    label_video = tk.Label(frame_imgs)
+    label_video.pack(side='right')
+
+    frame_shlr = tk.Frame(root)
+    frame_shlr.pack(side='top', fill='both', padx=15)
+
+    button_del = tk.Button(frame_shlr, text="Reset Text", command=reset_word,
+                           activebackground='red', activeforeground='white')
+    button_del.pack(side='right')
 
     label_sh = tk.Label(frame_shlr, text="Spelling Hand")
     label_sh.pack(side='top', pady=2)
@@ -69,13 +84,6 @@ def main():
     rbutton_left.pack(side='left', padx=5, pady=1)
     rbutton_right = tk.Radiobutton(frame_lr, text="Right", variable=var_sh, value=1)
     rbutton_right.pack(side='left', padx=5, pady=1)
-
-    tk_guide = ImageTk.PhotoImage(Image.open("ASLalphabet.jpg"))
-    label_guide = tk.Label(frame_imgs, image=tk_guide)
-    label_guide.pack(side='left')
-
-    label_video = tk.Label(frame_imgs)
-    label_video.pack(side='right')
 
     # name_cam_window = 'Video'
     # name_guide_window = 'ASL Alphabet'
@@ -145,7 +153,6 @@ def main():
     mode = 0
     record_letter = False
     last_activation_time = 0
-    recorded_word = ""
     max_word_len = 22
 
     while True:
@@ -284,6 +291,11 @@ def main():
     cv.destroyAllWindows()
 
 
+def reset_word():
+    global recorded_word
+    recorded_word = ""
+
+
 def select_mode(key, mode):
     number = -1
     if 48 <= key <= 57:  # 0 ~ 9
@@ -295,6 +307,7 @@ def select_mode(key, mode):
     if key == 104:  # h
         mode = 2
     return number, mode
+
 
 def skip():
     pass
