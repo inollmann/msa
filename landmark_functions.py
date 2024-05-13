@@ -248,9 +248,9 @@ def draw_info(image, fps):
 def draw_letters(image, letters):
     x = 10
     y = 30
-    cv.putText(image, "Text: " + str(letters), (x, y), cv.FONT_HERSHEY_SIMPLEX,
+    cv.putText(image, "Text: " + str(letters) + "_", (x, y), cv.FONT_HERSHEY_SIMPLEX,
                1.0, (0, 0, 0), 4, cv.LINE_AA)
-    cv.putText(image, "Text: " + str(letters), (x, y), cv.FONT_HERSHEY_SIMPLEX,
+    cv.putText(image, "Text: " + str(letters) + "_", (x, y), cv.FONT_HERSHEY_SIMPLEX,
                1.0, (0, 255, 0), 2, cv.LINE_AA)
 
     return image

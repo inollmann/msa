@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 import cv2 as cv
 import mediapipe as mp
 import tkinter as tk
+from tkinter import messagebox
 
 from model.keypoint_classifier.control_classifier import ControlClassifier
 from utils import CvFpsCalc
@@ -65,11 +66,18 @@ def main():
     label_video.pack(side='right')
 
     frame_shlr = tk.Frame(root)
-    frame_shlr.pack(side='top', fill='both', padx=15)
+    frame_shlr.pack(side='top', padx=15)
 
     button_del = tk.Button(frame_shlr, text="Reset Text", command=reset_word,
                            activebackground='red', activeforeground='white')
-    button_del.pack(side='right')
+    button_del.pack(side='right', padx=100)
+
+    info_text = ("Select your preferred hand for spelling down at the bottom.\n"
+                 "The other hand will be used for entering a letter.\n"
+                 "Perform a thumbs up gesture to enter the letter currently depicted by your spelling hand.")
+    button_info = tk.Button(frame_shlr, text="How to use",
+                            command=lambda: messagebox.showinfo("How to use", info_text))
+    button_info.pack(side='left', padx=100)
 
     label_sh = tk.Label(frame_shlr, text="Spelling Hand")
     label_sh.pack(side='top', pady=2)
@@ -82,6 +90,8 @@ def main():
     rbutton_left.pack(side='left', padx=5, pady=1)
     rbutton_right = tk.Radiobutton(frame_lr, text="Right", variable=var_sh, value=1)
     rbutton_right.pack(side='left', padx=5, pady=1)
+
+
 
     # Argument parsing #################################################################
     args = get_args()
@@ -162,7 +172,7 @@ def main():
         fps = cvFpsCalc.get()
 
         # Process Key (ESC: end) #################################################
-        key = cv.waitKey(10)
+        key = cv.waitKey(1)
         if key == 27:   # ESC
             break
         if key == 8:    # Del
