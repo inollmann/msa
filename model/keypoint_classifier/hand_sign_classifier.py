@@ -7,7 +7,7 @@ import tensorflow as tf
 class HandSignClassifier(object):
     def __init__(
         self,
-        model_path='model/customModel/modelB/ASLclassifier4a.tflite',
+        model_path='model/customModel/modelB/ASLclassifier4b.tflite',
         num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_path,

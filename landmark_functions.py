@@ -168,21 +168,22 @@ def encode_handedness(landmark_array, column):
 
 # Augmentation
 
-def random_rotation(landmark_array, max_angle):
+def random_rotation(landmark_array, max_angle=180):
     lm_array = copy.deepcopy(landmark_array)
-    aug_array = landmark_array[:, 3:].reshape(landmark_array.shape[0], 21, 2)
+    aug_array = landmark_array[:, 2:].reshape(landmark_array.shape[0], 21, 3)
     aug_array = aug_array.astype(float)
     for i, hand in enumerate(aug_array):
-        angle = np.random.uniform(0, np.radians(max_angle))
-        rot_mat = np.array([[np.cos(angle), np.sin(angle)*-1],
-                            [np.sin(angle), np.cos(angle)]])
-        for j, xy in enumerate(hand):
-            xy_rot = np.dot(rot_mat, xy.T)
+        angle = np.random.uniform(np.radians(-max_angle), np.radians(max_angle))
+        rot_y = np.array([[np.cos(angle), 0, np.sin(angle)],
+                          [0, 1, 0],
+                          [-np.sin(angle), 0, np.cos(angle)]])
+        for j, xyz in enumerate(hand):
+            xy_rot = np.dot(rot_y, xyz.T)
             aug_array[i, j] = xy_rot.T
-    aug_array = aug_array.reshape(landmark_array.shape[0], 42)
-    lm_array[:, 3:] = aug_array.astype('<U22')
+    aug_array = aug_array.reshape(landmark_array.shape[0], 63)
+    lm_array[:, 2:] = aug_array.astype('<U22')
 
-    return landmark_array
+    return lm_array
 
 
 # Landmark Visualization
