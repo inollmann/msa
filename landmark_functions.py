@@ -66,8 +66,7 @@ def pre_process_landmark(landmark_list, include_z=False):
             temp_landmark_list[index][2] = temp_landmark_list[index][2] - base_z
 
     # Convert to a one-dimensional list
-    temp_landmark_list = list(
-        itertools.chain.from_iterable(temp_landmark_list))
+    temp_landmark_list = list(itertools.chain.from_iterable(temp_landmark_list))
 
     # Normalization
     max_value = max(list(map(abs, temp_landmark_list)))
@@ -76,6 +75,11 @@ def pre_process_landmark(landmark_list, include_z=False):
         return n / max_value
 
     temp_landmark_list = list(map(normalize_, temp_landmark_list))
+
+    if include_z:
+        max_z = max(abs(x) for x in temp_landmark_list[2::3])
+        for i in range(2, len(temp_landmark_list), 3):
+            temp_landmark_list[i] /= max_z
 
     return temp_landmark_list
 
@@ -109,6 +113,36 @@ def conv_to_2D(landmark_list):
         landmarks_2D.append(row[:2])
 
     return landmarks_2D
+
+
+def conv_to_angles(landmark_list):
+    coords = np.array(landmark_list, dtype="float").reshape(21, 3)
+    e = {
+        "vert": coords[9, :] - coords[0, :],
+        "hor": coords[17, :] - coords[5, :]
+    }
+    x = {
+        "thumb": coords[4, :] - coords[2, :],
+        "index": coords[8, :] - coords[6, :],
+        "middle": coords[12, :] - coords[10, :],
+        "ring": coords[16, :] - coords[14, :],
+        "little": coords[20, :] - coords[18, :]
+    }
+    n = np.cross(e["vert"], e["hor"])
+    feature_list = [val for val in n]
+
+    for finger in x:
+        x_finger = x[finger]
+        x_proj = x_finger - np.dot(x_finger, n) / np.dot(n, n) * n
+
+        sin_phi = abs(np.dot(x_finger, n)) / (np.linalg.norm(x_finger) * np.linalg.norm(n))
+        cos_theta = np.dot(e["vert"], x_proj) / (np.linalg.norm(e["vert"]) * np.linalg.norm(x_proj))
+        phi = np.arcsin(min(1, max(-1, sin_phi)))
+        theta = np.arccos(min(1, max(-1, cos_theta)))
+
+        feature_list.extend([phi, theta])
+
+    return feature_list
 
 
 # Transform to Image Coordinates

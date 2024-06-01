@@ -6,3 +6,5 @@ dist/
 venv/
 mediapipe_test.ipynb
 codetest.py
+model.png
+ALS Guide.jpg
