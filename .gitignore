@@ -4,6 +4,7 @@ Dokumente/
 build/
 dist/
 venv/
+keypoints/keypointB_augmented.csv
 mediapipe_test.ipynb
 codetest.py
 model.png

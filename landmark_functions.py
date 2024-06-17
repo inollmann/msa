@@ -115,7 +115,7 @@ def conv_to_2D(landmark_list):
     return landmarks_2D
 
 
-def conv_to_angles(landmark_list):
+def conv_to_3D_angles(landmark_list):
     coords = np.array(landmark_list, dtype="float").reshape(21, 3)
     e = {
         "vert": coords[9, :] - coords[0, :],
@@ -129,21 +129,50 @@ def conv_to_angles(landmark_list):
         "little": coords[20, :] - coords[18, :]
     }
     n = np.cross(e["vert"], e["hor"])
-    feature_list = [val for val in n]
+    feature_list = [val/np.linalg.norm(n) for val in n]
 
     for finger in x:
         x_finger = x[finger]
-        x_proj = x_finger - np.dot(x_finger, n) / np.dot(n, n) * n
+        x_proj = x_finger - (np.dot(x_finger, n) / np.dot(n, n)) * n
 
-        sin_phi = abs(np.dot(x_finger, n)) / (np.linalg.norm(x_finger) * np.linalg.norm(n))
+        len_x = np.linalg.norm(x_finger)
+        sin_phi = abs(np.dot(x_finger, n)) / (len_x * np.linalg.norm(n))
         cos_theta = np.dot(e["vert"], x_proj) / (np.linalg.norm(e["vert"]) * np.linalg.norm(x_proj))
-        phi = np.arcsin(min(1, max(-1, sin_phi)))
-        theta = np.arccos(min(1, max(-1, cos_theta)))
+        # phi = np.arcsin(min(1, max(-1, sin_phi)))
+        # theta = np.arccos(min(1, max(-1, cos_theta)))
 
-        feature_list.extend([phi, theta])
+        feature_list.extend([sin_phi, cos_theta, len_x])
 
     return feature_list
 
+
+def conv_to_2D_angles(landmark_list, from_3D=False):
+    if from_3D:
+        landmark_list = [x for i, x in enumerate(landmark_list) if (i + 1) % 3 != 0]
+
+    feature_list = []
+    reference_axis = [0, 1]
+    coords = np.array(landmark_list, dtype="float").reshape(21, 2)
+    x = {
+        "palm": coords[9, :] - coords[0, :],
+        "thumb": coords[4, :] - coords[2, :],
+        "index": coords[8, :] - coords[6, :],
+        "middle": coords[12, :] - coords[10, :],
+        "ring": coords[16, :] - coords[14, :],
+        "little": coords[20, :] - coords[18, :]
+    }
+
+    for vector in x:
+        x_vector = x[vector]
+        len_vector = np.linalg.norm(x_vector)
+        if len_vector != 0:
+            cos_theta = np.dot(x_vector, reference_axis) / (len_vector * np.linalg.norm(reference_axis))
+        else:
+            cos_theta = 0
+
+        feature_list.extend([cos_theta, len_vector])
+
+    return feature_list
 
 # Transform to Image Coordinates
 

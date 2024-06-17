@@ -16,11 +16,12 @@ import landmark_functions as lf
 
 lm_full = lf.read_csv('keypoints/keypointB_3D_full.csv', datatype='npstring')
 # lm_aug = lf.random_rotation(lm_full)
-lm_angles = np.zeros((lm_full.shape[0], 15), dtype='<U22')
+lm_angles = np.zeros((lm_full.shape[0], 20), dtype='<U22')   # 14 , 20
 lm_angles[:, :2] = lm_full[:, :2]
 
 for idx, row in enumerate(lm_full):
-    lm_angles[idx, 2:] = lf.conv_to_angles(row[2:])
+    lm_angles[idx, 2:] = lf.conv_to_3D_angles(row[2:])
+    # lm_angles[idx, 2:] = lf.conv_to_2D_angles(row[2:], from_3D=True)
 
 lf.write_csv('keypoints/keypointB_angles_3D.csv', lm_angles)
 print('Finished')
