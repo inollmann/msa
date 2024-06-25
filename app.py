@@ -93,7 +93,7 @@ def main():
 
 
 
-    # Argument parsing #################################################################
+    # Argument parsing
     args = get_args()
 
     guide = cv.imread('ASLalphabet.jpg')
@@ -108,12 +108,12 @@ def main():
     use_brect = True
     use_3D = True
 
-    # Camera preparation ###############################################################
+    # Camera preparation
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
-    # Model load #############################################################
+    # Load MediaPipe
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
@@ -127,7 +127,7 @@ def main():
 
     # point_history_classifier = PointHistoryClassifier()
 
-    # Read labels ###########################################################
+    # Read labels
     with open('model/customModel/ASLclassifier_label.csv',
               encoding='utf-8-sig') as f:
         letter_labels = csv.reader(f)
@@ -142,15 +142,15 @@ def main():
     #     point_history_classifier_labels = csv.reader(f)
     #     point_history_classifier_labels = [row[0] for row in point_history_classifier_labels]
 
-    # FPS Measurement ########################################################
+    # FPS measurement
     cvFpsCalc = CvFpsCalc(buffer_len=10)
 
-    # Coordinate history #################################################################
-    history_length = 16  # 16
-    point_history = deque(maxlen=history_length)
+    # Coordinate history
+    # history_length = 16  # 16
+    # point_history = deque(maxlen=history_length)
 
-    # Finger gesture history ################################################
-    finger_gesture_history = deque(maxlen=history_length)
+    # Finger gesture history
+    # finger_gesture_history = deque(maxlen=history_length)
 
     #  ########################################################################
     # mode = 0
@@ -207,7 +207,7 @@ def main():
 
                 # Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = lf.pre_process_landmark(landmark_list, include_z=use_3D)
-                pre_processed_point_history_list = lf.pre_process_point_history(debug_image, point_history)
+                # pre_processed_point_history_list = lf.pre_process_point_history(debug_image, point_history)
 
                 # Hand sign classification
                 classifier_input = [handedness_id] + pre_processed_landmark_list
@@ -271,9 +271,10 @@ def main():
                     # point_history_classifier_labels[most_common_fg_id[0][0]],
                 )
         else:
-            point_history.append([0, 0])
+            # point_history.append([0, 0])
+            pass
 
-        debug_image = lf.draw_point_history(debug_image, point_history)
+        # debug_image = lf.draw_point_history(debug_image, point_history)
         debug_image = lf.draw_info(debug_image, fps)
         debug_image = lf.draw_letters(debug_image, recorded_word)
 
@@ -298,4 +299,5 @@ def reset_word():
 
 
 if __name__ == '__main__':
+    print("Loading ...")
     main()

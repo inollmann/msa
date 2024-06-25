@@ -7,7 +7,7 @@ import tensorflow as tf
 class ControlClassifier(object):
     def __init__(
         self,
-        model_path='model/customModel/controlModel/control_classifier1a.tflite',
+        model_path='model/customModel/controlModel/control_classifierctrl.tflite',
         num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_path,

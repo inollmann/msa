@@ -142,9 +142,9 @@ def log_landmarks(csv_path, control_dataset=False, mirror_image=False):
 
 
 def main():
-    log_landmarks('keypoints/keypointB_3D_left.csv', mirror_image=False)
-    log_landmarks('keypoints/keypointB_3D_right.csv', mirror_image=True)
-    # log_landmarks('keypoints/keypointControl_1.csv', control_dataset=True)
+    # log_landmarks('keypoints/keypointB_3D_left.csv', mirror_image=False)
+    # log_landmarks('keypoints/keypointB_3D_right.csv', mirror_image=True)
+    log_landmarks('keypoints/keypointControl_1.csv', control_dataset=True)
 
 
 if __name__ == '__main__':

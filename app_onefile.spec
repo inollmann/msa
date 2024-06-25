@@ -1,4 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
+#block_cipher = None
+
 import sys
 sys.setrecursionlimit(sys.getrecursionlimit() * 10)
 
@@ -49,14 +51,3 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    name='ASL_Writer'
-)
-

@@ -62,6 +62,7 @@ def pre_process_landmark(landmark_list, include_z=False):
 
         temp_landmark_list[index][0] = temp_landmark_list[index][0] - base_x
         temp_landmark_list[index][1] = temp_landmark_list[index][1] - base_y
+
         if include_z:
             temp_landmark_list[index][2] = temp_landmark_list[index][2] - base_z
 
@@ -80,6 +81,10 @@ def pre_process_landmark(landmark_list, include_z=False):
         max_z = max(abs(x) for x in temp_landmark_list[2::3])
         for i in range(2, len(temp_landmark_list), 3):
             temp_landmark_list[i] /= max_z
+        check = copy.deepcopy(temp_landmark_list)
+        temp_landmark_list = temp_landmark_list[3:]
+    else:
+        temp_landmark_list = temp_landmark_list[2:]
 
     return temp_landmark_list
 

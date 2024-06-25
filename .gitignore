@@ -9,3 +9,5 @@ mediapipe_test.ipynb
 codetest.py
 model.png
 ALS Guide.jpg
+hand_landmarker.ipynb
+readLandmarkCSV.py
