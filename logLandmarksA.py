@@ -8,6 +8,7 @@ import itertools
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
+import landmark_functions as lf
 
 from utils import CvFpsCalc
 
@@ -54,8 +55,8 @@ def main():
     # Model load #############################################################
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
-        max_num_hands=16,
+        static_image_mode=True,
+        max_num_hands=1,
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence,
     )
@@ -100,23 +101,29 @@ def main():
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
+                handedness_id = handedness.classification[0].index
+
                 # Bounding box calculation
-                brect = calc_bounding_rect(debug_image, hand_landmarks)
+                brect = lf.calc_bounding_rect(debug_image, hand_landmarks)
 
                 # Landmark calculation
-                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+                landmark_list = lf.calc_landmark_list(debug_image, hand_landmarks, include_z=True)
 
                 # Conversion to relative coordinates / normalized coordinates
-                pre_processed_landmark_list = pre_process_landmark(
-                    landmark_list)
+                pre_processed_landmark_list = lf.pre_process_landmark(landmark_list, include_z=True)
 
                 # Write to the dataset file
-                logging_csv(frame, user, letter, pre_processed_landmark_list, mode)
+                lf.logging_csv(letter, handedness_id, pre_processed_landmark_list, csv_path)
 
                 # Drawing part
-                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
-                debug_image = draw_landmarks(debug_image, landmark_list)
-                debug_image = draw_info_text(
+                debug_image = lf.draw_bounding_rect(use_brect, debug_image, brect)
+                try:
+                    debug_image = lf.draw_landmarks(debug_image, landmark_list)
+                except Exception as e:
+                    print(e)
+                    break
+
+                debug_image = lf.draw_info_text(
                     debug_image,
                     brect,
                     handedness,
@@ -125,7 +132,6 @@ def main():
         # Screen reflection #############################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
         frame = frame + 1
-
 
     cv.destroyAllWindows()
 

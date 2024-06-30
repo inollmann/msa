@@ -135,7 +135,6 @@ def log_landmarks(csv_path, control_dataset=False, mirror_image=False):
         # Screen reflection #############################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
 
-
         frame = frame + 1
 
     cv.destroyAllWindows()

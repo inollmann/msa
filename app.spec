@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 import sys
-sys.setrecursionlimit(sys.getrecursionlimit() * 10)
+sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
 a = Analysis(
     ['app.py'],
@@ -35,7 +35,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='app',
+    name='Yebra',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -57,6 +57,6 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='ASL_Writer'
+    name='Yebra'
 )
 

@@ -53,7 +53,7 @@ def main():
 
     # Create GUI
     root = tk.Tk()
-    root.title("ASL Writer")
+    root.title("Yebra")
 
     frame_imgs = tk.Frame(root)
     frame_imgs.pack(side='top')
