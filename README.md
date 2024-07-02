@@ -8,7 +8,8 @@ Die aktuelle Version des Programms kann im Repository unter __Releases__ herunte
 2. Download der Datei _v1.1.zip_
 3. ZIP-Ordner entpacken
 4. Ordner _Yebra_ öffnen
-5. _Yebra.exe_ ausführen
+5. Sicherstellen, dass eine Webcam verfügbar ist
+6. _Yebra.exe_ ausführen
 
 Falls Windows Defender den Start verhindert, auf "Trotzdem ausführen" klicken. <br>
 
